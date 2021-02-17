@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request, redirect, url_for
+from flask_cors import CORS, cross_origin
 from werkzeug.utils import secure_filename
 import shutil
 
@@ -7,12 +8,15 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = b'secret'
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 ALLOWED_EXTENSION = {'jpg', 'jpeg', 'png'}
 def allowed_files(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSION
 @app.route('/', methods=['GET', 'POST'])
+@cross_origin()
 def index():
     if request.method == 'POST':
         if 'file' not in request.files:
